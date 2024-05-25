@@ -4,7 +4,6 @@ import org.craftedsw.tripservicekata.trip.Trip
 import java.util.*
 
 class User {
-
     private val _trips: MutableList<Trip> = ArrayList()
     val trips: List<Trip>
         get() = _trips
@@ -16,5 +15,4 @@ class User {
     fun addFriend(user: User) = _friends.add(user)
 
     fun addTrip(trip: Trip) = _trips.add(trip)
-
 }

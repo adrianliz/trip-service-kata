@@ -5,10 +5,8 @@ import org.craftedsw.tripservicekata.trip.Trip
 import org.craftedsw.tripservicekata.trip.TripDAO
 import org.craftedsw.tripservicekata.user.User
 import org.craftedsw.tripservicekata.user.UserSession
-import java.util.*
 
 class TripService_Original {
-
     fun getTripsByUser(user: User): List<Trip> {
         var tripList: List<Trip> = ArrayList<Trip>()
         val loggedUser: User? = UserSession.instance.loggedUser
@@ -28,5 +26,4 @@ class TripService_Original {
             throw UserNotLoggedInException()
         }
     }
-
 }
