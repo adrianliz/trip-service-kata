@@ -9,15 +9,14 @@ open class TripService {
         var tripList: List<Trip> = ArrayList<Trip>()
         val loggedUser: User? = getLoggedUser()
         var isFriend = false
-        if (loggedUser != null) {
-            isFriend = loggedUser.isFriendOf(user)
-            if (isFriend) {
-                tripList = findTrips(user)
-            }
-            return tripList
-        } else {
+        if (loggedUser == null) {
             throw UserNotLoggedInException()
         }
+        isFriend = loggedUser.isFriendOf(user)
+        if (isFriend) {
+            tripList = findTrips(user)
+        }
+        return tripList
     }
 
     open fun findTrips(user: User) = TripDAO.findTripsByUser(user)
