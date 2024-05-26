@@ -15,19 +15,26 @@ class TripServiceTest {
     private val userSessionProvider = mockk<UserSessionProvider>()
     private val tripService = TripService(tripsRepository, userSessionProvider)
 
-    private fun friendUser(loggedUser: User): User {
-        val friendUser = User()
-        friendUser.addFriend(loggedUser)
-        return friendUser
-    }
+    private fun friendUser(user: User) = User().apply { addFriend(user) }
+
+    private fun givenNoLoggedUser() = every { userSessionProvider.findLoggedUser() } returns null
+
+    private fun givenThereIsLoggedUser(loggedUser: User) = every { userSessionProvider.findLoggedUser() } returns loggedUser
+
+    private fun givenUserHasTrips(
+        user: User,
+        trips: List<Trip>,
+    ) = every { tripsRepository.findBy(user) } returns trips
+
+    private fun anyTrips() = listOf(Trip(), Trip())
 
     @Test
     fun `should throw UserNotLoggedInException when user is not logged in`() {
-        val notLoggedUser = User()
-        every { userSessionProvider.findLoggedUser() } returns null
+        val guest = User()
+        givenNoLoggedUser()
 
         assertThrows(UserNotLoggedInException::class.java) {
-            tripService.getTripsByUser(notLoggedUser)
+            tripService.getTripsByUser(guest)
         }
     }
 
@@ -35,7 +42,7 @@ class TripServiceTest {
     fun `should return no trips when user is not friend with logged user`() {
         val loggedUser = User()
         val notFriendUser = User()
-        every { userSessionProvider.findLoggedUser() } returns loggedUser
+        givenThereIsLoggedUser(loggedUser)
 
         val trips = tripService.getTripsByUser(notFriendUser)
 
@@ -46,12 +53,12 @@ class TripServiceTest {
     fun `should return trips of logged user when user is friend with logged user`() {
         val loggedUser = User()
         val friendUser = friendUser(loggedUser)
-        val loggedUserTrips = listOf(Trip(), Trip())
-        every { userSessionProvider.findLoggedUser() } returns loggedUser
-        every { tripsRepository.findBy(friendUser) } returns loggedUserTrips
+        val friendUserTrips = anyTrips()
+        givenThereIsLoggedUser(loggedUser)
+        givenUserHasTrips(friendUser, friendUserTrips)
 
         val trips = tripService.getTripsByUser(friendUser)
 
-        assertEquals(loggedUserTrips, trips)
+        assertEquals(friendUserTrips, trips)
     }
 }
