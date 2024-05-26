@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TripServiceTest {
-    class TripServiceWith(val user: User?, val trips: List<Trip> = emptyList()) : TripService() {
+    class TripServiceWith(val user: User?, val trips: List<Trip> = emptyList()) : TripService(TripDAO()) {
         companion object {
             fun noLoggedUser() = TripServiceWith(null)
         }
