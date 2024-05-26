@@ -1,5 +1,7 @@
 package org.craftedsw.tripservicekata.trip
 
+import io.mockk.every
+import io.mockk.mockk
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException
 import org.craftedsw.tripservicekata.user.User
 import org.junit.Assert.assertThrows
@@ -8,15 +10,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TripServiceTest {
-    class TripServiceWith(val user: User?, val trips: List<Trip> = emptyList()) : TripService(TripDAO()) {
+    class TripServiceWith(val user: User?, tripsRepository: TripsRepository = mockk()) : TripService(tripsRepository) {
         companion object {
-            fun noLoggedUser() = TripServiceWith(null)
+            fun noLoggedUser() = TripServiceWith(null, mockk())
         }
 
         override fun getLoggedUser() = user
-
-        override fun findTrips(user: User) = trips
     }
+
+    private val tripsRepository = mockk<TripsRepository>()
 
     private fun friendUser(loggedUser: User): User {
         val friendUser = User()
@@ -50,7 +52,8 @@ class TripServiceTest {
         val loggedUser = User()
         val friendUser = friendUser(loggedUser)
         val loggedUserTrips = listOf(Trip(), Trip())
-        val tripService = TripServiceWith(loggedUser, loggedUserTrips)
+        every { tripsRepository.findBy(friendUser) } returns loggedUserTrips
+        val tripService = TripServiceWith(loggedUser, tripsRepository)
 
         val trips = tripService.getTripsByUser(friendUser)
 
