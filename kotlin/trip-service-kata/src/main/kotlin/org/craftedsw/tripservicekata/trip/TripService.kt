@@ -7,9 +7,11 @@ import org.craftedsw.tripservicekata.user.UserSession
 open class TripService {
     fun getTripsByUser(user: User): List<Trip> {
         val loggedUser: User = getLoggedUser() ?: throw UserNotLoggedInException()
-        if (!loggedUser.isFriendOf(user)) return listOf()
+        if (!loggedUser.isFriendOf(user)) return noTrips()
         return findTrips(user)
     }
+
+    private fun noTrips(): List<Trip> = listOf()
 
     open fun findTrips(user: User) = TripDAO.findTripsByUser(user)
 
