@@ -17,13 +17,15 @@ open class TripService {
                 }
             }
             if (isFriend) {
-                tripList = TripDAO.findTripsByUser(user)
+                tripList = findTrips(user)
             }
             return tripList
         } else {
             throw UserNotLoggedInException()
         }
     }
+
+    open fun findTrips(user: User) = TripDAO.findTripsByUser(user)
 
     open fun getLoggedUser() = UserSession.instance.loggedUser
 }
