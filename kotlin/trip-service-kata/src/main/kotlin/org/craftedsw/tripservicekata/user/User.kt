@@ -15,4 +15,15 @@ class User {
     fun addFriend(user: User) = _friends.add(user)
 
     fun addTrip(trip: Trip) = _trips.add(trip)
+
+    fun isFriendOf(user: User): Boolean {
+        var isFriend = false
+        for (friend in user.friends) {
+            if (friend == this) {
+                isFriend = true
+                break
+            }
+        }
+        return isFriend
+    }
 }
