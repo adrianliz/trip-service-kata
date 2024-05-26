@@ -2,9 +2,12 @@ package org.craftedsw.tripservicekata.trip
 
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException
 import org.craftedsw.tripservicekata.user.User
-import org.craftedsw.tripservicekata.user.UserSession
+import org.craftedsw.tripservicekata.user.UserSessionProvider
 
-open class TripService(private val tripsRepository: TripsRepository) {
+class TripService(
+    private val tripsRepository: TripsRepository,
+    private val userSessionProvider: UserSessionProvider,
+) {
     fun getTripsByUser(user: User): List<Trip> {
         val loggedUser: User = getLoggedUser() ?: throw UserNotLoggedInException()
         if (!loggedUser.isFriendOf(user)) return noTrips()
@@ -13,7 +16,7 @@ open class TripService(private val tripsRepository: TripsRepository) {
 
     private fun noTrips(): List<Trip> = listOf()
 
-    open fun findTrips(user: User) = tripsRepository.findBy(user)
+    private fun findTrips(user: User) = tripsRepository.findBy(user)
 
-    open fun getLoggedUser() = UserSession.instance.loggedUser
+    private fun getLoggedUser() = userSessionProvider.findLoggedUser()
 }
